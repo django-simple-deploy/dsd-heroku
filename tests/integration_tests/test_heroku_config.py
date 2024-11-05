@@ -21,13 +21,13 @@ from tests.integration_tests.conftest import (
 
 def test_settings(tmp_project):
     """Verify settings have been changed for heroku."""
-    hf.check_reference_file(tmp_project, "blog/settings.py", "heroku")
+    hf.check_reference_file(tmp_project, "blog/settings.py", "dsd-heroku")
 
 
 def test_requirements_txt(tmp_project, pkg_manager):
     """Test that the requirements.txt file is correct."""
     if pkg_manager == "req_txt":
-        hf.check_reference_file(tmp_project, "requirements.txt", "heroku")
+        hf.check_reference_file(tmp_project, "requirements.txt", "dsd-heroku")
     elif pkg_manager == "poetry":
         # Poetry is so specific, the version numbers of sub-dependencies change
         # frequently. Just check that the appropriate packages are present.
@@ -52,7 +52,7 @@ def test_pipfile(tmp_project, pkg_manager):
     if pkg_manager in ("req_txt", "poetry"):
         assert not Path("Pipfile").exists()
     elif pkg_manager == "pipenv":
-        hf.check_reference_file(tmp_project, "Pipfile", "heroku")
+        hf.check_reference_file(tmp_project, "Pipfile", "dsd-heroku")
 
 
 def test_pyproject_toml(tmp_project, pkg_manager):
@@ -62,12 +62,12 @@ def test_pyproject_toml(tmp_project, pkg_manager):
     elif pkg_manager == "poetry":
         # Heroku uses requirements.txt for deployment, but simple_deploy will slightly
         # restructure pyproject.toml.
-        hf.check_reference_file(tmp_project, "pyproject.toml", "heroku")
+        hf.check_reference_file(tmp_project, "pyproject.toml", "dsd-heroku")
 
 
 def test_gitignore(tmp_project):
     """Test that .gitignore has been modified correctly."""
-    hf.check_reference_file(tmp_project, ".gitignore", "heroku")
+    hf.check_reference_file(tmp_project, ".gitignore", "dsd-heroku")
 
 
 # --- Test Heroku-specific files ---
@@ -75,12 +75,12 @@ def test_gitignore(tmp_project):
 
 def test_generated_procfile(tmp_project):
     """Test that the generated Procfile is correct."""
-    hf.check_reference_file(tmp_project, "Procfile", "heroku")
+    hf.check_reference_file(tmp_project, "Procfile", "dsd-heroku")
 
 
 def test_static_placeholder(tmp_project):
     """Test that the static dir is present, with a placeholder.txt file."""
-    hf.check_reference_file(tmp_project, "static/placeholder.txt", "heroku")
+    hf.check_reference_file(tmp_project, "static/placeholder.txt", "dsd-heroku")
 
 
 # --- Test logs ---
