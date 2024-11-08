@@ -1,4 +1,2 @@
 include requirements.in
 recursive-include dsd_heroku/templates *
-global-exclude *.pyc
-global-exclude *.DS_Store
