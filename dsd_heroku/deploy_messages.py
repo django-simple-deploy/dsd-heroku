@@ -21,9 +21,9 @@ The --automate-all flag means simple_deploy will:
 
 no_heroku_app_detected = """No Heroku app name has been detected.
 
-- The simple_deploy command assumes you have already run 'heroku create'
+- The deploy command assumes you have already run 'heroku create'
   to start the deployment process.
-- Please run 'heroku create', and then run 'python manage.py simple_deploy' again.
+- Please run 'heroku create', and then run 'python manage.py deploy' again.
 - If you haven't already done so, you will need to install the Heroku CLI:
   https://devcenter.heroku.com/articles/heroku-cli
 """
@@ -31,12 +31,12 @@ no_heroku_app_detected = """No Heroku app name has been detected.
 cli_not_installed = """
 In order to deploy to Heroku, you need to install the Heroku CLI.
   See here: https://devcenter.heroku.com/articles/heroku-cli
-After installing the CLI, you can run simple_deploy again.
+After installing the CLI, you can run the deploy command again.
 """
 
 cli_not_authenticated = """
 In order to deploy to Heroku, you must be authenticated through the Heroku CLI.
-Please run `heroku login`, and then run simple_deploy again.
+Please run `heroku login`, and then run the deploy command again.
 """
 
 heroku_settings_found = """
@@ -47,7 +47,7 @@ overwrite this block, and everything that follows in settings.py?
 cant_overwrite_settings = """
 In order to configure the project for deployment, we need to write a Heroku-specific
 settings block. Please remove the current Heroku-specific settings, and then run
-simple_deploy again.
+the deploy command again.
 """
 
 
