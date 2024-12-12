@@ -4,7 +4,7 @@ Changelog: dsd-heroku
 0.9 - Simplified usage from core
 ---
 
-### 0.9.1
+### 0.9.1 (unreleased)
 
 #### External changes
 
@@ -13,6 +13,7 @@ Changelog: dsd-heroku
 #### Internal changes
 
 - Uses config instead of returning individual attributes to core.
+- Simplified packaging; all setup.cfg config moved to pyproject.toml.
 
 ### 0.9.0
 
