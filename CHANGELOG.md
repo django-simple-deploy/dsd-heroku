@@ -4,6 +4,16 @@ Changelog: dsd-heroku
 0.9 - Simplified usage from core
 ---
 
+### 0.9.1
+
+#### External changes
+
+- Updated messaging to use deploy command instead of simple_deploy.
+
+#### Internal changes
+
+- Uses config instead of returning individual attributes to core.
+
 ### 0.9.0
 
 #### External changes
