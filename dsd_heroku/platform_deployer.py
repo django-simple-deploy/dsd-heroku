@@ -9,6 +9,8 @@ from django.core.management.utils import get_random_secret_key
 from django.utils.crypto import get_random_string
 from django.utils.safestring import mark_safe
 
+import toml
+
 # from ..utils import plugin_utils
 # from ..utils.plugin_utils import sd_config
 # from ..utils.command_errors import SimpleDeployCommandError
@@ -101,6 +103,10 @@ class PlatformDeployer:
 
         msg = "  Generating a requirements.txt file, because Heroku does not support Poetry directly..."
         plugin_utils.write_output(msg)
+
+        # Poetry 2.0 removed built-in support for `export`. Exporting to 
+        # requirements.txt now requires the poetry-plugin-export plugin.
+        self._check_poetry_export_plugin()
 
         cmd = "poetry export -f requirements.txt --output requirements.txt --without-hashes"
         output = plugin_utils.run_quick_command(cmd)
@@ -410,6 +416,28 @@ class PlatformDeployer:
         app_dict = self.apps_list["app"]
         self.heroku_app_name = app_dict["name"]
         plugin_utils.write_output(f"    Found Heroku app: {self.heroku_app_name}")
+
+    def _check_poetry_export_plugin(self):
+        """Make sure poetry-export-plugin is available."""
+        cmd = "poetry self show plugins"
+        output = plugin_utils.run_quick_command(cmd)
+        if "poetry-export-plugin" not in output.stdout.decode():
+            self._install_poetry_export_plugin()
+
+    def _install_poetry_export_plugin(self):
+        """Install poetry-export-plugin, so we can export requirements."""
+        cmd = "poetry self add poetry-plugin-export"
+
+        msg = "In order to continue, the plugin poetry-plugin-export needs to be installed."
+        msg += "\nThis is used to export pyproject.toml requirements to requirements.txt,"
+        msg += "\nwhich Heroku can parse."
+        msg += "\nThe following command will be run:"
+        msg += f"\n  $ {cmd}"
+        msg += "\nIs it okay to install the poetry-plugin-export plugin?"
+        plugin_utils.get_confirmation(msg)
+
+        output = plugin_utils.run_quick_command(cmd)
+        plugin_utils.write_output(output)
 
     def _create_postgres_db(self):
         """Create a Heroku Postgres database.
