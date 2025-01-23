@@ -421,7 +421,7 @@ class PlatformDeployer:
         """Make sure poetry-export-plugin is available."""
         cmd = "poetry self show plugins"
         output = plugin_utils.run_quick_command(cmd)
-        if "poetry-export-plugin" not in output.stdout.decode():
+        if "poetry-plugin-export" not in output.stdout.decode():
             self._install_poetry_export_plugin()
 
     def _install_poetry_export_plugin(self):
