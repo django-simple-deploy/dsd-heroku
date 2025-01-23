@@ -13,11 +13,11 @@ import toml
 
 # from ..utils import plugin_utils
 # from ..utils.plugin_utils import sd_config
-# from ..utils.command_errors import SimpleDeployCommandError
+# from ..utils.command_errors import DSDCommandError
 from django_simple_deploy.management.commands.utils import plugin_utils
 from django_simple_deploy.management.commands.utils.plugin_utils import sd_config
 from django_simple_deploy.management.commands.utils.command_errors import (
-    SimpleDeployCommandError,
+    DSDCommandError,
 )
 
 from . import deploy_messages as platform_msgs
@@ -64,7 +64,7 @@ class PlatformDeployer:
             None
 
         Raises:
-            SimpleDeployCommandError: If we find any reason deployment won't work.
+            DSDCommandError: If we find any reason deployment won't work.
         """
         self._check_heroku_settings()
         self._check_cli_installed()
@@ -335,7 +335,7 @@ class PlatformDeployer:
             None
 
         Raises:
-            SimpleDeployCommandError: If CLI not installed.
+            DSDCommandError: If CLI not installed.
         """
         if sd_config.unit_testing:
             return
@@ -345,14 +345,14 @@ class PlatformDeployer:
             output_obj = plugin_utils.run_quick_command(cmd)
         except FileNotFoundError:
             # This generates a FileNotFoundError on Linux (Ubuntu) if CLI not installed.
-            raise SimpleDeployCommandError(platform_msgs.cli_not_installed)
+            raise DSDCommandError(platform_msgs.cli_not_installed)
 
         plugin_utils.log_info(output_obj)
 
         # The returncode for a successful command is 0, so anything truthy means the
         # command errored out.
         if output_obj.returncode:
-            raise SimpleDeployCommandError(platform_msgs.cli_not_installed)
+            raise DSDCommandError(platform_msgs.cli_not_installed)
 
     def _check_cli_authenticated(self):
         """Verify the user has authenticated with the CLI.
@@ -361,7 +361,7 @@ class PlatformDeployer:
             None
 
         Raises:
-            SimpleDeployCommandError: If the user has not been authenticated.
+            DSDCommandError: If the user has not been authenticated.
         """
         if sd_config.unit_testing:
             return
@@ -375,7 +375,7 @@ class PlatformDeployer:
         if ("Error: Invalid credentials provided" in output_str) or (
             "Error: not logged in" in output_str
         ):
-            raise SimpleDeployCommandError(platform_msgs.cli_not_authenticated)
+            raise DSDCommandError(platform_msgs.cli_not_authenticated)
 
     def _check_heroku_project_available(self):
         """Verify that a Heroku project is available to push to.
@@ -386,7 +386,7 @@ class PlatformDeployer:
             None
 
         Raises:
-            SimpleDeployCommandError: If there's no app to push to.
+            DSDCommandError: If there's no app to push to.
 
         Sets:
             dict: self.apps_list
@@ -409,7 +409,7 @@ class PlatformDeployer:
 
         # If output_str is emtpy, there is no heroku app.
         if not output_str:
-            raise SimpleDeployCommandError(platform_msgs.no_heroku_app_detected)
+            raise DSDCommandError(platform_msgs.no_heroku_app_detected)
 
         # Parse output for app_name.
         self.apps_list = json.loads(output_str)
