@@ -12,10 +12,10 @@ from django.utils.safestring import mark_safe
 import toml
 
 # from ..utils import plugin_utils
-# from ..utils.plugin_utils import sd_config
+# from ..utils.plugin_utils import dsd_config
 # from ..utils.command_errors import DSDCommandError
 from django_simple_deploy.management.commands.utils import plugin_utils
-from django_simple_deploy.management.commands.utils.plugin_utils import sd_config
+from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
 from django_simple_deploy.management.commands.utils.command_errors import (
     DSDCommandError,
 )
@@ -75,7 +75,7 @@ class PlatformDeployer:
         """Respond appropriately if the local project uses Poetry.
 
         If the project uses Poetry, generate a requirements.txt file, and override the
-        initial value of sd_config.pkg_manager.
+        initial value of dsd_config.pkg_manager.
 
         Heroku doesn't work directly with Poetry, so we need to generate a
         requirements.txt file for the user, which we can then add requirements to. We
@@ -98,7 +98,7 @@ class PlatformDeployer:
             None
         """
         # Making this check here keeps deploy() cleaner.
-        if sd_config.pkg_manager != "poetry":
+        if dsd_config.pkg_manager != "poetry":
             return
 
         msg = "  Generating a requirements.txt file, because Heroku does not support Poetry directly..."
@@ -117,10 +117,10 @@ class PlatformDeployer:
 
         # From this point forward, treat this user the same as anyone who's using a bare
         # requirements.txt file.
-        sd_config.pkg_manager = "req_txt"
-        sd_config.req_txt_path = sd_config.git_path / "requirements.txt"
+        dsd_config.pkg_manager = "req_txt"
+        dsd_config.req_txt_path = dsd_config.git_path / "requirements.txt"
         plugin_utils.log_info("    Package manager set to req_txt.")
-        plugin_utils.log_info(f"    req_txt path: {sd_config.req_txt_path}")
+        plugin_utils.log_info(f"    req_txt path: {dsd_config.req_txt_path}")
 
         # Add simple_deploy, because it wasn't done earlier for poetry.
         # This may be a bug in how poetry is handled by core.
@@ -137,7 +137,7 @@ class PlatformDeployer:
         Returns:
             None
         """
-        if not sd_config.automate_all:
+        if not dsd_config.automate_all:
             return
 
         # Create heroku app.
@@ -159,10 +159,10 @@ class PlatformDeployer:
             None
         """
         # DB not needed for unit testing.
-        if sd_config.unit_testing:
+        if dsd_config.unit_testing:
             return
         # DB already created for automate-all.
-        if sd_config.automate_all:
+        if dsd_config.automate_all:
             return
 
         # Look for a Postgres database.
@@ -197,7 +197,7 @@ class PlatformDeployer:
 
     def _set_env_vars(self):
         """Set Heroku-specific environment variables."""
-        if sd_config.unit_testing:
+        if dsd_config.unit_testing:
             return
 
         self._set_heroku_env_var()
@@ -207,19 +207,19 @@ class PlatformDeployer:
     def _add_procfile(self):
         """Add Procfile to project."""
         # Generate Procfile contents.
-        wsgi_path = f"{sd_config.local_project_name}.wsgi"
-        if sd_config.nested_project:
-            wsgi_path = f"{sd_config.local_project_name}.{wsgi_path}"
+        wsgi_path = f"{dsd_config.local_project_name}.wsgi"
+        if dsd_config.nested_project:
+            wsgi_path = f"{dsd_config.local_project_name}.{wsgi_path}"
         proc_command = f"web: gunicorn {wsgi_path} --log-file -"
 
         # Write Procfile.
-        path = sd_config.project_root / "Procfile"
+        path = dsd_config.project_root / "Procfile"
         plugin_utils.add_file(path, proc_command)
 
     def _add_static_file_directory(self):
         """Create a folder for static files, if it doesn't already exist."""
         # Make sure directory exists.
-        path_static = sd_config.project_root / "static"
+        path_static = dsd_config.project_root / "static"
         plugin_utils.add_dir(path_static)
 
         # If static/ is not empty, we don't need to do anything.
@@ -243,7 +243,7 @@ class PlatformDeployer:
 
     def _conclude_automate_all(self):
         """Finish automating the push to Heroku."""
-        if not sd_config.automate_all:
+        if not dsd_config.automate_all:
             return
 
         plugin_utils.commit_changes()
@@ -267,8 +267,8 @@ class PlatformDeployer:
 
         # Run initial set of migrations.
         plugin_utils.write_output("  Migrating deployed app...")
-        if sd_config.nested_project:
-            cmd = f"heroku run python {sd_config.local_project_name}/manage.py migrate"
+        if dsd_config.nested_project:
+            cmd = f"heroku run python {dsd_config.local_project_name}/manage.py migrate"
         else:
             cmd = "heroku run python manage.py migrate"
         output = plugin_utils.run_quick_command(cmd)
@@ -305,14 +305,14 @@ class PlatformDeployer:
         #   - Describe ongoing approach of commit, push, migrate. Lots to consider
         #     when doing this on production app with users, make sure you learn.
 
-        if sd_config.automate_all:
+        if dsd_config.automate_all:
             # Show how to make future deployments.
             msg = platform_msgs.success_msg_automate_all(
                 self.heroku_app_name, self.current_branch
             )
         else:
             # Show steps to finish the deployment process.
-            msg = platform_msgs.success_msg(sd_config.pkg_manager, self.heroku_app_name)
+            msg = platform_msgs.success_msg(dsd_config.pkg_manager, self.heroku_app_name)
 
         plugin_utils.write_output(msg)
 
@@ -337,7 +337,7 @@ class PlatformDeployer:
         Raises:
             DSDCommandError: If CLI not installed.
         """
-        if sd_config.unit_testing:
+        if dsd_config.unit_testing:
             return
 
         cmd = "heroku --version"
@@ -363,7 +363,7 @@ class PlatformDeployer:
         Raises:
             DSDCommandError: If the user has not been authenticated.
         """
-        if sd_config.unit_testing:
+        if dsd_config.unit_testing:
             return
 
         cmd = "heroku auth:whoami"
@@ -392,12 +392,12 @@ class PlatformDeployer:
             dict: self.apps_list
             str: self.heroku_app_name
         """
-        if sd_config.unit_testing:
+        if dsd_config.unit_testing:
             self.heroku_app_name = "sample-name-11894"
             return
 
         # automate-all does the work we're checking for here.
-        if sd_config.automate_all:
+        if dsd_config.automate_all:
             return
 
         plugin_utils.write_output("  Looking for Heroku app to push to...")
@@ -484,7 +484,7 @@ class PlatformDeployer:
     def _set_secret_key_env_var(self):
         """Use an env var to manage the secret key."""
         # Generate a new key.
-        if sd_config.on_windows:
+        if dsd_config.on_windows:
             # Non-alphanumeric keys have been problematic on Windows.
             new_secret_key = get_random_string(
                 length=50, allowed_chars="abcdefghijklmnopqrstuvwxyz0123456789"
@@ -502,7 +502,7 @@ class PlatformDeployer:
     def _generate_summary(self):
         """Generate the friendly summary, which is html for now."""
         # Generate the summary file.
-        # path = sd_config.log_dir_path / "deployment_summary.html"
+        # path = dsd_config.log_dir_path / "deployment_summary.html"
 
         # summary_str = "<h2>Understanding your deployment</h2>"
         # path.write_text(summary_str, encoding="utf-8")
