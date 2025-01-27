@@ -4,6 +4,17 @@ Changelog: dsd-heroku
 0.9 - Simplified usage from core
 ---
 
+### 0.9.3 (skipping 0.9.2 to match pre-1.0 version of django-simple-deploy)
+
+#### External changes
+
+- Updated to match core app name change from `simple_deploy` to `django-simple-deploy`.
+- Installs `poetry-plugin-export` when poetry is being used to manage requirements.
+
+#### Internal changes
+
+- Minor naming changes to make project consistent with current names in core.
+
 ### 0.9.1
 
 #### External changes
