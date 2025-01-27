@@ -7,7 +7,7 @@ import pytest
 from tests.integration_tests.utils import it_helper_functions as hf
 from tests.integration_tests.conftest import (
     tmp_project,
-    run_simple_deploy,
+    run_dsd,
     reset_test_project,
     pkg_manager,
 )
@@ -88,7 +88,7 @@ def test_static_placeholder(tmp_project):
 
 def test_log_dir(tmp_project):
     """Test that the log directory exists, and contains an appropriate log file."""
-    log_path = Path(tmp_project / "simple_deploy_logs")
+    log_path = Path(tmp_project / "dsd_logs")
     assert log_path.exists()
 
     # There should be exactly two log files.
@@ -117,7 +117,7 @@ def test_log_dir(tmp_project):
     assert "INFO: Deployment target: Heroku" in log_file_text
     assert "INFO: Local project name: blog" in log_file_text
     assert "INFO: git status --porcelain" in log_file_text
-    assert "INFO: ?? simple_deploy_logs/" in log_file_text
+    assert "INFO: ?? dsd_logs/" in log_file_text
 
     # Spot check for success messages.
     assert (
