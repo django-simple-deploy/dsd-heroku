@@ -10,6 +10,7 @@ from tests.integration_tests.conftest import (
     run_dsd,
     reset_test_project,
     pkg_manager,
+    dsd_version,
 )
 
 
@@ -24,10 +25,17 @@ def test_settings(tmp_project):
     hf.check_reference_file(tmp_project, "blog/settings.py", "dsd-heroku")
 
 
-def test_requirements_txt(tmp_project, pkg_manager):
+def test_requirements_txt(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that the requirements.txt file is correct."""
     if pkg_manager == "req_txt":
-        hf.check_reference_file(tmp_project, "requirements.txt", "dsd-heroku")
+        context = {"current-version": dsd_version}
+        hf.check_reference_file(
+            tmp_project,
+            "requirements.txt",
+            "dsd-heroku",
+            context=context,
+            tmp_path=tmp_path,
+        )
     elif pkg_manager == "poetry":
         # Poetry is so specific, the version numbers of sub-dependencies change
         # frequently. Just check that the appropriate packages are present.
@@ -47,12 +55,15 @@ def test_requirements_txt(tmp_project, pkg_manager):
         assert not Path("requirements.txt").exists()
 
 
-def test_pipfile(tmp_project, pkg_manager):
+def test_pipfile(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that Pipfile is correct."""
     if pkg_manager in ("req_txt", "poetry"):
         assert not Path("Pipfile").exists()
     elif pkg_manager == "pipenv":
-        hf.check_reference_file(tmp_project, "Pipfile", "dsd-heroku")
+        context = {"current-version": dsd_version}
+        hf.check_reference_file(
+            tmp_project, "Pipfile", "dsd-heroku", context=context, tmp_path=tmp_path
+        )
 
 
 def test_pyproject_toml(tmp_project, pkg_manager):

@@ -104,7 +104,7 @@ class PlatformDeployer:
         msg = "  Generating a requirements.txt file, because Heroku does not support Poetry directly..."
         plugin_utils.write_output(msg)
 
-        # Poetry 2.0 removed built-in support for `export`. Exporting to 
+        # Poetry 2.0 removed built-in support for `export`. Exporting to
         # requirements.txt now requires the poetry-plugin-export plugin.
         self._check_poetry_export_plugin()
 
@@ -312,7 +312,9 @@ class PlatformDeployer:
             )
         else:
             # Show steps to finish the deployment process.
-            msg = platform_msgs.success_msg(dsd_config.pkg_manager, self.heroku_app_name)
+            msg = platform_msgs.success_msg(
+                dsd_config.pkg_manager, self.heroku_app_name
+            )
 
         plugin_utils.write_output(msg)
 
@@ -429,7 +431,9 @@ class PlatformDeployer:
         cmd = "poetry self add poetry-plugin-export"
 
         msg = "In order to continue, the plugin poetry-plugin-export needs to be installed."
-        msg += "\nThis is used to export pyproject.toml requirements to requirements.txt,"
+        msg += (
+            "\nThis is used to export pyproject.toml requirements to requirements.txt,"
+        )
         msg += "\nwhich Heroku can parse."
         msg += "\nThe following command will be run:"
         msg += f"\n  $ {cmd}"
