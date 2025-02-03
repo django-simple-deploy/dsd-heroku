@@ -66,14 +66,15 @@ def test_pipfile(tmp_project, pkg_manager, tmp_path, dsd_version):
         )
 
 
-def test_pyproject_toml(tmp_project, pkg_manager):
+def test_pyproject_toml(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that pyproject.toml is correct."""
     if pkg_manager in ("req_txt", "pipenv"):
         assert not Path("pyproject.toml").exists()
     elif pkg_manager == "poetry":
         # Heroku uses requirements.txt for deployment, but simple_deploy will slightly
         # restructure pyproject.toml.
-        hf.check_reference_file(tmp_project, "pyproject.toml", "dsd-heroku")
+        context = {"current-version": dsd_version}
+        hf.check_reference_file(tmp_project, "pyproject.toml", "dsd-heroku", context=context, tmp_path=tmp_path)
 
 
 def test_gitignore(tmp_project):

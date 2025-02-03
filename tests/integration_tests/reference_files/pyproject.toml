@@ -20,4 +20,4 @@ requests = "*"
 optional = true
 
 [tool.poetry.group.deploy.dependencies]
-django-simple-deploy = "==0.9.3"
+django-simple-deploy = "=={current-version}"
