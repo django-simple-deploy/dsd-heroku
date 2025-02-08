@@ -74,7 +74,13 @@ def test_pyproject_toml(tmp_project, pkg_manager, tmp_path, dsd_version):
         # Heroku uses requirements.txt for deployment, but simple_deploy will slightly
         # restructure pyproject.toml.
         context = {"current-version": dsd_version}
-        hf.check_reference_file(tmp_project, "pyproject.toml", "dsd-heroku", context=context, tmp_path=tmp_path)
+        hf.check_reference_file(
+            tmp_project,
+            "pyproject.toml",
+            "dsd-heroku",
+            context=context,
+            tmp_path=tmp_path,
+        )
 
 
 def test_gitignore(tmp_project):
