@@ -203,6 +203,7 @@ class PlatformDeployer:
         self._set_heroku_env_var()
         self._set_debug_env_var()
         self._set_secret_key_env_var()
+        self._set_settings_module_env_var()
 
     def _add_procfile(self):
         """Add Procfile to project."""
@@ -502,6 +503,20 @@ class PlatformDeployer:
         output = plugin_utils.run_quick_command(cmd, skip_logging=True)
         plugin_utils.write_output(output)
         plugin_utils.write_output("    Set SECRET_KEY config variable.")
+
+    def _set_settings_module_env_var(self):
+        """Set the DJANGO_SETTINGS_MODULE env var if needed."""
+        # This is primarily for Wagtail projects, as signified by a settings/production.py file.
+        if dsd_config.settings_path.parts[-2:] == ("settings", "production.py"):
+            plugin_utils.write_output("  Setting DJANGO_SETTINGS_MODULE environment variable...")
+
+            # Need form mysite.settings.production
+            dotted_settings_path = ".".join(dsd_config.settings_path.parts[-3:]).removesuffix(".py")
+
+            cmd = f"heroku config:set DJANGO_SETTINGS_MODULE={dotted_settings_path}"
+            output = plugin_utils.run_quick_command(cmd)
+            plugin_utils.write_output(output)
+            plugin_utils.write_output("    Set SECRET_KEY config variable.")
 
     def _generate_summary(self):
         """Generate the friendly summary, which is html for now."""
