@@ -236,10 +236,13 @@ class PlatformDeployer:
     def _modify_settings(self):
         """Add Heroku-specific settings.
 
-        This settings block is currently the same for all users. The ALLOWED_HOSTS
-        setting should be customized.
+        DEV: The ALLOWED_HOSTS setting should be customized.
         """
-        template_path = self.templates_path / "settings.py"
+        if dsd_config.settings_path.parts[-2:] == ("settings", "production.py"):
+            template_path = self.templates_path / "settings_wagtail.py"
+        else:
+            template_path = self.templates_path / "settings.py"
+
         plugin_utils.modify_settings_file(template_path)
 
     def _conclude_automate_all(self):
