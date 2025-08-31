@@ -6,6 +6,21 @@ Changelog: dsd-heroku
 
 The stable 1.0 release of core django-simple-deploy is now available, and this project is at 1.0 to match that.
 
+### 1.1.0
+
+#### External changes
+
+- Supports deployment of Wagtail projects:
+    - Set `DJANGO_SETTINGS_MODULE` environment variable to `<project-name>.settings.production`.
+    - Don't set `ON_HEROKU` environment variable.
+    - Use a Wagtail-specific settings template.
+    - Settings do not need to be in a conditional block, because they're already in a production-specific file.
+- Don't assume `ALLOWED_HOSTS` has already been defined.    
+
+#### Internal changes
+
+- N/A
+
 ### 1.0.0
 
 #### External changes
