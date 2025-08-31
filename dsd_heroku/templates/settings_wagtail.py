@@ -35,13 +35,6 @@ if "ON_HEROKU" in os.environ:
     i = MIDDLEWARE.index("django.middleware.security.SecurityMiddleware")
     MIDDLEWARE.insert(i + 1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
-    # STORAGES = {
-    #     # Enable WhiteNoise's GZip and Brotli compression of static assets:
-    #     # https://whitenoise.readthedocs.io/en/latest/django.html#add-compression-and-caching-support
-    #     "staticfiles": {
-    #         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    #     },
-    # }
     STORAGES["staticfiles"]["BACKEND"] = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
     # Don't store the original (un-hashed filename) version of static files, to reduce slug size:
