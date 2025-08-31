@@ -463,6 +463,10 @@ class PlatformDeployer:
         """Set a config var to indicate when we're in the Heroku environment.
         This is mostly used to modify settings for the deployed project.
         """
+        # Don't need this env var for Wagtail projects.
+        if dsd_config.settings_path.parts[-2:] == ("settings", "production.py"):
+            return
+            
         plugin_utils.write_output("  Setting Heroku environment variable...")
         cmd = "heroku config:set ON_HEROKU=1"
         output = plugin_utils.run_quick_command(cmd)
