@@ -142,7 +142,10 @@ if "ON_HEROKU" in os.environ:
     DEBUG = os.getenv("DEBUG") == "TRUE"
     SECRET_KEY = os.getenv("SECRET_KEY")
 
-    ALLOWED_HOSTS.append("*")
+    try:
+        ALLOWED_HOSTS.append("*")
+    except NameError:
+        ALLOWED_HOSTS = ["*"]
 
     DATABASES = {
         "default": dj_database_url.config(

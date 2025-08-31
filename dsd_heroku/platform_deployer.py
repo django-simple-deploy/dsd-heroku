@@ -203,6 +203,7 @@ class PlatformDeployer:
         self._set_heroku_env_var()
         self._set_debug_env_var()
         self._set_secret_key_env_var()
+        self._set_settings_module_env_var()
 
     def _add_procfile(self):
         """Add Procfile to project."""
@@ -235,10 +236,13 @@ class PlatformDeployer:
     def _modify_settings(self):
         """Add Heroku-specific settings.
 
-        This settings block is currently the same for all users. The ALLOWED_HOSTS
-        setting should be customized.
+        DEV: The ALLOWED_HOSTS setting should be customized.
         """
-        template_path = self.templates_path / "settings.py"
+        if dsd_config.settings_path.parts[-2:] == ("settings", "production.py"):
+            template_path = self.templates_path / "settings_wagtail.py"
+        else:
+            template_path = self.templates_path / "settings.py"
+
         plugin_utils.modify_settings_file(template_path)
 
     def _conclude_automate_all(self):
@@ -459,6 +463,10 @@ class PlatformDeployer:
         """Set a config var to indicate when we're in the Heroku environment.
         This is mostly used to modify settings for the deployed project.
         """
+        # Don't need this env var for Wagtail projects.
+        if dsd_config.settings_path.parts[-2:] == ("settings", "production.py"):
+            return
+            
         plugin_utils.write_output("  Setting Heroku environment variable...")
         cmd = "heroku config:set ON_HEROKU=1"
         output = plugin_utils.run_quick_command(cmd)
@@ -502,6 +510,20 @@ class PlatformDeployer:
         output = plugin_utils.run_quick_command(cmd, skip_logging=True)
         plugin_utils.write_output(output)
         plugin_utils.write_output("    Set SECRET_KEY config variable.")
+
+    def _set_settings_module_env_var(self):
+        """Set the DJANGO_SETTINGS_MODULE env var if needed."""
+        # This is primarily for Wagtail projects, as signified by a settings/production.py file.
+        if dsd_config.settings_path.parts[-2:] == ("settings", "production.py"):
+            plugin_utils.write_output("  Setting DJANGO_SETTINGS_MODULE environment variable...")
+
+            # Need form mysite.settings.production
+            dotted_settings_path = ".".join(dsd_config.settings_path.parts[-3:]).removesuffix(".py")
+
+            cmd = f"heroku config:set DJANGO_SETTINGS_MODULE={dotted_settings_path}"
+            output = plugin_utils.run_quick_command(cmd)
+            plugin_utils.write_output(output)
+            plugin_utils.write_output("    Set SECRET_KEY config variable.")
 
     def _generate_summary(self):
         """Generate the friendly summary, which is html for now."""
