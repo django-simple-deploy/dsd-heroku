@@ -525,7 +525,7 @@ class PlatformDeployer:
         cmd = f"heroku config:set DJANGO_SETTINGS_MODULE={dotted_settings_path}"
         output = plugin_utils.run_quick_command(cmd)
         plugin_utils.write_output(output)
-        plugin_utils.write_output("    Set SECRET_KEY config variable.")
+        plugin_utils.write_output("    Set DJANGO_SETTINGS_MODULE config variable.")
 
     def _generate_summary(self):
         """Generate the friendly summary, which is html for now."""
