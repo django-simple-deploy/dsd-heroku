@@ -6,6 +6,16 @@ Changelog: dsd-heroku
 
 The stable 1.0 release of core django-simple-deploy is now available, and this project is at 1.0 to match that.
 
+### (Unreleased)
+
+#### External changes
+
+- Shows correct message when setting `DJANGO_SETTINGS_MODULE` environment variable.
+
+#### Internal changes
+
+- Uses `dsd_config.wagtail_project` to support Wagtail projects.
+
 ### 1.1.0
 
 #### External changes
